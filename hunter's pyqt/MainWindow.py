@@ -9,7 +9,7 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-
+from custom.listWidgets import FuncListWidget, UsedListWidget
 import cv2
 import numpy as np
 from PyQt5.QtGui import QPixmap, QImage, qRgb
@@ -24,27 +24,67 @@ import sys
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1000, 600)
+        MainWindow.resize(1400, 800)
+
+
+
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         MainWindow.setCentralWidget(self.centralwidget)
         # 设置窗口背景颜色
+
         MainWindow.setStyleSheet("background-color: #545454;")
         self.centralwidget.setStyleSheet("background-color: #2C2C2C;")
 
 
+
+        # 创建第一个 QDockWidget 实例
+        dock_widget1 = QDockWidget("已用", MainWindow)
+        dock_widget1.setAllowedAreas(QtCore.Qt.RightDockWidgetArea)
+        dock_widget_content1 = QtWidgets.QWidget()
+        dock_widget_layout1 = QtWidgets.QVBoxLayout()
+        # 添加内容到 dock_widget_layout1
+        dock_widget_content1.setLayout(dock_widget_layout1)
+        dock_widget1.setWidget(dock_widget_content1)
+        MainWindow.addDockWidget(QtCore.Qt.RightDockWidgetArea, dock_widget1)
+
+        # 创建第二个 QDockWidget 实例
+        dock_widget2 = QDockWidget("属性", MainWindow)
+        dock_widget2.setAllowedAreas(QtCore.Qt.RightDockWidgetArea)
+        dock_widget_content2 = QtWidgets.QWidget()
+        dock_widget_layout2 = QtWidgets.QVBoxLayout()
+        # 添加内容到 dock_widget_layout2
+        dock_widget_content2.setLayout(dock_widget_layout2)
+        dock_widget2.setWidget(dock_widget_content2)
+        MainWindow.addDockWidget(QtCore.Qt.RightDockWidgetArea, dock_widget2)
+
+
+
+        #label
         self.label_daichuli = QtWidgets.QLabel(self.centralwidget)
-        self.label_daichuli.setGeometry(QtCore.QRect(100, 100, 300, 300))
+        self.label_daichuli.setGeometry(QtCore.QRect(100, 150, 400, 400))
         self.label_daichuli.setObjectName("label_daichuli")
+        self.label_daichuli.setMouseTracking(True)
+        self.label_daichuli.mousePressPos = None
+        self.label_daichuli.mouseMovePos = None
+        self.label_daichuli.setMouseTracking(True)
+        self.label_daichuli.mousePressed = False
+        self.label_daichuli.setCursor(QtCore.Qt.PointingHandCursor)
+        self.label_daichuli.mousePressEvent = self.mousePressEvent
+        self.label_daichuli.mouseMoveEvent = self.mouseMoveEvent
+        self.label_daichuli.mouseReleaseEvent = self.mouseReleaseEvent
+
         self.label_jieguo = QtWidgets.QLabel(self.centralwidget)
-        self.label_jieguo.setGeometry(QtCore.QRect(500, 100, 300, 300))
+        self.label_jieguo.setGeometry(QtCore.QRect(600, 150, 400, 400))
         self.label_jieguo.setObjectName("label_jieguo")
 
         self.label_daichuli.setStyleSheet("background-color: #FFFFFF;")
         self.label_jieguo.setStyleSheet("background-color: #FFFFFF;")
 
+
+        #menubar
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 23))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 60))
         self.menubar.setObjectName("menubar")
         self.menu_1 = QtWidgets.QMenu(self.menubar)
         self.menu_1.setObjectName("menu_1")
@@ -52,6 +92,19 @@ class Ui_MainWindow(object):
         self.menu_2 = QtWidgets.QMenu(self.menubar)
         self.menu_2.setObjectName("menu_2")
         self.menubar.addAction(self.menu_2.menuAction())
+        self.menu_3 = QtWidgets.QMenu(self.menubar)
+        self.menu_3.setObjectName("menu_3")
+        self.menubar.addAction(self.menu_3.menuAction())
+        self.menu_4 = QtWidgets.QMenu(self.menubar)
+        self.menu_4.setObjectName("menu_4")
+        self.menubar.addAction(self.menu_4.menuAction())
+        self.menu_5 = QtWidgets.QMenu(self.menubar)
+        self.menu_5.setObjectName("menu_5")
+        self.menubar.addAction(self.menu_5.menuAction())
+        self.menu_6 = QtWidgets.QMenu(self.menubar)
+        self.menu_6.setObjectName("menu_2")
+        self.menubar.addAction(self.menu_6.menuAction())
+
         MainWindow.setMenuBar(self.menubar)
 
         self.actionopen = QtWidgets.QAction(MainWindow)
@@ -63,16 +116,20 @@ class Ui_MainWindow(object):
         MainWindow.setStatusBar(self.statusbar)
         # 自定义菜单项样式
         menubar_style = "QMenuBar::item { color: #FFFFFF; }" \
-                        "QMenuBar::selected{background-color:#FFFFFF;}"  # 设置菜单项文字颜色为
+                        "QMenuBar::selected{background-color:#FFFFFF;}" \
+                        "QMenuBar { padding: 5px; }"  # 设置菜单项文字颜色为
         self.menubar.setStyleSheet(menubar_style)
 
         menu_style="QMenu {background-color:#FFFFFF;border:1px solid rgba(82,130,164,1);}"
 
         self.menu_1.setStyleSheet(menu_style)
 
+        #工具栏
         self.toolBar = QtWidgets.QToolBar(MainWindow)
         self.toolBar.setObjectName("toolBar")
         MainWindow.addToolBar(QtCore.Qt.LeftToolBarArea, self.toolBar)
+        self.action_tool_0 = QtWidgets.QAction(MainWindow)
+        self.action_tool_0.setObjectName("action_tool_0")
         self.action_tool_1 = QtWidgets.QAction(MainWindow)
         self.action_tool_1.setObjectName("action_tool_1")
         self.action_tool_2 = QtWidgets.QAction(MainWindow)
@@ -80,16 +137,17 @@ class Ui_MainWindow(object):
         self.action_tool_3 = QtWidgets.QAction(MainWindow)
         self.action_tool_3.setObjectName("action_tool_3")
 
-
-        #信号槽
+        self.toolBar.addAction(self.action_tool_0)
         self.toolBar.addAction(self.action_tool_1)
         self.toolBar.addAction(self.action_tool_2)
         self.toolBar.addAction(self.action_tool_3)
+
+        # 信号槽
         self.actionopen.triggered.connect(self.open_img)
         self.action_tool_2.triggered.connect(self.flip_img)
         self.action_tool_1.triggered.connect(self.gray_img)
         self.action_tool_3.triggered.connect(self.VR)
-
+        self.action_tool_0.triggered.connect(self.enable_label_drag)
 
 
         self.retranslateUi(MainWindow)
@@ -105,16 +163,46 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+
         self.label_daichuli.setText(_translate("MainWindow", "待处理"))
         self.label_jieguo.setText(_translate("MainWindow", "结果"))
         self.menu_1.setTitle(_translate("MainWindow", "文件"))
         self.menu_2.setTitle(_translate("MainWindow", "编辑"))
+        self.menu_3.setTitle(_translate("MainWindow", "图像"))
+        self.menu_4.setTitle(_translate("MainWindow", "文字"))
+        self.menu_5.setTitle(_translate("MainWindow", "滤镜"))
+        self.menu_6.setTitle(_translate("MainWindow", "视图"))
+
         self.toolBar.setWindowTitle(_translate("MainWindow", "toolBar"))
+        self.action_tool_0.setText(_translate("MainWindow", "鼠标"))
         self.action_tool_1.setText(_translate("MainWindow", "灰度"))
         self.action_tool_2.setText(_translate("MainWindow", "平滑"))
         self.action_tool_3.setText(_translate("MainWindow", "VR"))
         self.actionopen.setText(_translate("MainWindow", "打开"))
 
+    def enable_label_drag(self):
+        self.label_daichuli.mousePressed = not self.label_daichuli.mousePressed
+        if self.label_daichuli.mousePressed:
+            self.label_daichuli.setCursor(QtCore.Qt.ClosedHandCursor)
+        else:
+            self.label_daichuli.setCursor(QtCore.Qt.PointingHandCursor)
+
+    def mousePressEvent(self, event):
+        if self.label_daichuli.mousePressed:
+            self.label_daichuli.mousePressPos = event.globalPos()
+            self.label_daichuli.mouseMovePos = event.globalPos()
+
+    def mouseMoveEvent(self, event):
+        if self.label_daichuli.mousePressed:
+            if self.label_daichuli.mousePressPos:
+                delta = event.globalPos() - self.label_daichuli.mouseMovePos
+                self.label_daichuli.move(self.label_daichuli.x() + delta.x(), self.label_daichuli.y() + delta.y())
+                self.label_daichuli.mouseMovePos = event.globalPos()
+
+    def mouseReleaseEvent(self, event):
+        if self.label_daichuli.mousePressed:
+            self.label_daichuli.mousePressPos = None
+            self.label_daichuli.mouseMovePos = None
 
     def open_img(self):
 
@@ -245,22 +333,5 @@ def main():
 if __name__ == "__main__":
     main()
 
-from PyQt5 import QtCore, QtGui, QtDesigner
 
 
-def dump_ui(widget, path):
-    builder = QtDesigner.QFormBuilder()
-    stream = QtCore.QFile(path)
-    stream.open(QtCore.QIODevice.WriteOnly)
-    builder.save(stream, widget)
-    stream.close()
-
-
-app = QtGui.QApplication([''])
-
-dialog = QtGui.QDialog()
-Ui_Dialog().setupUi(dialog)
-
-dialog.show()
-
-dump_ui(dialog, 'myui.ui')
