@@ -1,0 +1,67 @@
+*{
+    font-family: 微软雅黑;
+    color: #535353;
+    background-color: #282828;
+}
+
+QGraphicsView {
+    background-color: #ffffff;
+}
+QToolBar {
+    background-color: #535353;
+}
+QToolBar QToolButton {
+    color: white;
+    background-color: #535353;
+
+}
+QToolBar QToolButton:hover {
+    background-color: lightblue;
+    border: 1px solid blue;
+    color: white;
+}
+
+QMenuBar {
+    background-color: #535353;
+}
+QMenuBar::item {
+    background-color: transparent; /* 清除菜单项的背景颜色 */
+    color: white; /* 设置菜单项文字颜色 */
+}
+
+QMenu {
+    background-color: #FFFFFF; /* 背景颜色 */
+    border: 1px solid rgba(82, 130, 164, 1); /* 边框样式 */
+}
+
+QPushButton {
+    color: #FFFFFF; /* 设置文字颜色为红色 */
+}
+
+/* 设置QDockWidget内部的QWidget的背景颜色 */
+QDockWidget QWidget {
+    background-color: #535353;
+}
+
+QDockWidget::title {
+    color: #ffffff; /* 设置文字颜色为白色 */
+}
+
+/* 设置QComboBox文本颜色 */
+QComboBox {
+    color: #FFFFFF;
+}
+
+QComboBox QAbstractItemView {
+    color: #FFFFFF;
+}
+
+QComboBox::item:selected {
+    background-color: #FFFFFF;
+    color: #FFFFFF;
+}
+
+/* 设置QLabel文本颜色 */
+QLabel {
+    color: #FFFFFF;
+}
